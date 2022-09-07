@@ -1,0 +1,9 @@
+{
+    "label": "B1500A device parameter analyzer",
+    "position": 2,
+    "link": {
+      "type": "generated-index",
+      "description": "How to setup and use the B1500A device parameter analyzer, including MPSMUs and the B1530A fast measurement unit or WGFMU."
+    }
+  }
+  
