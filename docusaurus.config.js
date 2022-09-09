@@ -1,5 +1,6 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
+let path = require("path")
 
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
@@ -32,6 +33,7 @@ const config = {
       'classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
+        debug: true,
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
@@ -126,6 +128,51 @@ const config = {
         },
       };
     },
+    async function pdfPlugin(context, options) {
+      console.log(path.join(__dirname, "src/"))
+      return {
+        name: 'pdf-plugin',
+        configureWebpack(config, isServer, utils) {
+
+          const {getJSLoader} = utils;
+          return {
+            resolve: {
+              fallback: { 'path': require.resolve('path-browserify') },
+              extensions: ['.jsx', '.js', '.tsx', '.ts'],
+            },
+            module: { 
+              rules: [
+                { 
+                  test: /\.css$/,
+                  exclude: /\.module\.css$/i,
+                  // include: path.join(__dirname, "node_modules/react-pdf"),
+                  include: {
+                    or: [path.join(__dirname, "node_modules/react-pdf")]
+                  },
+                  use: [
+                    'style-loader', 
+                    'css-loader',
+                    'postcss-loader'
+                  ],
+                },
+                {
+                  test: /\.less$/,
+                  use: ['style-loader', 'css-loader', 'less-loader'],
+                },
+                {
+                  test: /\.html$/,
+                  use: ['html-loader'],
+                },
+                {
+                  test: /canvas/,
+                  use: ['null-loader'],
+                },
+              ],
+            },
+          };
+        },
+      }
+    }
   ]
 };
 

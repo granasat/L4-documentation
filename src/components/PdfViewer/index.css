@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.pdf-container {
+
+}
+
+
+@layer components {
+  
+  .pdf-container {
+    @apply min-h-[600px] md:min-h-[900px];
+  }
+}
