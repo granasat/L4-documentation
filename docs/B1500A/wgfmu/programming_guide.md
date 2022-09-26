@@ -1,5 +1,6 @@
 ---
-title: B15030A Programming guide
+title: B1530A Programming guide
+position: 2
 ---
 
 import PdfViewer from '@site/src/components/PdfViewer'

@@ -1,0 +1,116 @@
+loadlibrary('wgfmu', 'wgfmu.h')
+
+%%
+
+calllib('wgfmu', 'WGFMU_clear')
+calllib('wgfmu', 'WGFMU_openSession', 'b1500gpib')
+calllib('wgfmu', 'WGFMU_initialize')
+
+%%
+
+calllib('wgfmu', 'WGFMU_closeSession')
+
+
+%%
+libfunctions wgfmu -full
+%%
+
+clear all; close all; clc;
+loadlibrary('wgfmu', 'wgfmu.h')
+
+CHANNEL1 = libpointer('int32', 101);
+CHANNEL2 = libpointer('int32', 102);
+
+nsamples = 10;
+samplingTime = 0.05;
+AVERAGING_TIME = 10e-6;
+WGFMU_MEASURE_EVENT_DATA_AVERAGED = 12000;
+WGFMU_OPERATION_MODE_FASTIV = 2001;
+WGFMU_MEASURE_MODE_CURRENT = 4001;
+
+clear = calllib('wgfmu', 'WGFMU_clear')
+
+p1 = calllib('wgfmu', 'WGFMU_createPattern', 'v1', 0)
+v1 = calllib('wgfmu', 'WGFMU_addVector', 'v1', 1, 0)
+m1 = calllib('wgfmu', 'WGFMU_setMeasureEvent', 'v1', 'evt', 0, nsamples, samplingTime, AVERAGING_TIME, WGFMU_MEASURE_EVENT_DATA_AVERAGED)
+s1 = calllib('wgfmu', 'WGFMU_addSequence', 101, 'v1', 1)
+
+p2 = calllib('wgfmu', 'WGFMU_createPattern', 'v2', 0)
+v2 = calllib('wgfmu', 'WGFMU_addVector', 'v2', 1, 0)
+m2 = calllib('wgfmu', 'WGFMU_setMeasureEvent', 'v2', 'evt2', 0, nsamples, samplingTime, AVERAGING_TIME, WGFMU_MEASURE_EVENT_DATA_AVERAGED);
+s2 = calllib('wgfmu', 'WGFMU_addSequence', 102, 'v2', 1)
+
+o = calllib('wgfmu', 'WGFMU_openSession', 'b1500gpib')
+i = calllib('wgfmu', 'WGFMU_initialize')
+
+%%
+om1 = calllib('wgfmu', 'WGFMU_setOperationMode', 101, WGFMU_OPERATION_MODE_FASTIV)
+om2 = calllib('wgfmu', 'WGFMU_setOperationMode', 102, WGFMU_OPERATION_MODE_FASTIV)
+mmode1 = calllib('wgfmu', 'WGFMU_setMeasureMode', 101, WGFMU_MEASURE_MODE_CURRENT)
+mmode2 = calllib('wgfmu', 'WGFMU_setMeasureMode', 102, WGFMU_MEASURE_MODE_CURRENT)
+
+c1 = calllib('wgfmu', 'WGFMU_connect', 101)
+c2 = calllib('wgfmu', 'WGFMU_connect', 102)
+e = calllib('wgfmu', 'WGFMU_execute')
+
+w = calllib('wgfmu', 'WGFMU_waitUntilCompleted')
+
+%%
+measuredSize = libpointer('int32Ptr', 0);
+totalSize = libpointer('int32Ptr', 0);
+
+
+mvsize = calllib('wgfmu', 'WGFMU_getMeasureValueSize', 101, measuredSize, totalSize);
+
+time = zeros(1, measuredSize.Value);
+current = zeros(1, measuredSize.Value);
+voltage = zeros(1, measuredSize.Value);
+for i = 1:measuredSize.Value
+    timePtr = libpointer('doublePtr', 0);
+    currentPtr = libpointer('doublePtr', 0);
+    voltagePtr = libpointer('doublePtr', 0);
+    
+    calllib('wgfmu', 'WGFMU_getMeasureValue', 101, i, timePtr, currentPtr);
+    calllib('wgfmu', 'WGFMU_getInterpolatedForceValue', 101, timePtr.Value, voltagePtr);
+    
+    time(i) = timePtr.Value;
+    current(i) = timePtr.Value;
+    time(i) = timePtr.Value;
+end
+
+for (int j = 0; j < resetSamples; j++)
+    {
+                    /*if (j >= samples) {
+                        break;
+                    }*/
+                    double time, value, voltage;
+                    WGFMU_getMeasureValue(CHANNEL2, j, &time, &value);
+                    WGFMU_getInterpolatedForceValue(CHANNEL1, time, &voltage);
+                    fprintf(fp, "%.9lf %.9lf %.9lf\n", voltage, abs(value), time);
+                }
+
+%%
+er = libpointer('cstring', blanks(300))
+ersize = libpointer('int32Ptr', 0)
+
+calllib('wgfmu', 'WGFMU_getError', er, ersize)
+
+%%
+
+ids = libpointer('int32Ptr', [0, 0, 0, 0]);
+size = libpointer('int32Ptr', 2);
+
+
+c = calllib('wgfmu', 'WGFMU_clear')
+o = calllib('wgfmu', 'WGFMU_openSession', 'b1500gpib')
+i = calllib('wgfmu', 'WGFMU_initialize')
+
+gcids = calllib('wgfmu', 'WGFMU_getChannelIds', ids, size)
+
+i = calllib('wgfmu', 'WGFMU_closeSession')
+
+
+
+
+
+

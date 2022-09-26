@@ -111,6 +111,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
+        additionalLanguages: ['matlab'],
       },
       colorMode: {
         'defaultMode': 'dark'
@@ -134,15 +135,15 @@ const config = {
         name: 'pdf-plugin',
         configureWebpack(config, isServer, utils) {
 
-          const {getJSLoader} = utils;
+          const { getJSLoader } = utils;
           return {
             resolve: {
               fallback: { 'path': require.resolve('path-browserify') },
               extensions: ['.jsx', '.js', '.tsx', '.ts'],
             },
-            module: { 
+            module: {
               rules: [
-                { 
+                {
                   test: /\.css$/,
                   exclude: /\.module\.css$/i,
                   // include: path.join(__dirname, "node_modules/react-pdf"),
@@ -150,7 +151,7 @@ const config = {
                     or: [path.join(__dirname, "node_modules/react-pdf")]
                   },
                   use: [
-                    'style-loader', 
+                    'style-loader',
                     'css-loader',
                     'postcss-loader'
                   ],

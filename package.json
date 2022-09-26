@@ -21,6 +21,7 @@
     "canvas": "^2.10.1",
     "clsx": "^1.2.1",
     "css-loader": "^6.7.1",
+    "docusaurus": "^1.14.7",
     "file-loader": "^6.2.0",
     "html-loader": "^4.1.0",
     "less-loader": "^11.0.0",
